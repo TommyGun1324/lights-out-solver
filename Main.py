@@ -1,5 +1,5 @@
 def solve(game: list[list[int]]) -> list[list[int]]:
-    get_toggle_matrix(3, 3)
+    get_toggle_matrix(2, 2)
 
 def get_toggle_matrix(rows: int, cols: int) -> list[list[int]]:
     s = rows * cols
@@ -12,7 +12,7 @@ def get_toggle_matrix(rows: int, cols: int) -> list[list[int]]:
                 for dj in range(-1, 2):
                     if (di == 0) == (dj == 0): # Check if both are 0 or abs(1)
                         continue
-                    elif i + di < rows and j + dj < cols:
+                    elif -1 < i + di < rows and -1 < j + dj < cols:
                         mat[c][row_major_index(cols, i + di, j + dj)] = 1
     for r in mat:
         print(r)
