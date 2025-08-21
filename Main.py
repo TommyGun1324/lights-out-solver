@@ -1,8 +1,3 @@
-def solve(game_matrix: list[list[int]]) -> list[list[int]]:
-    res = get_toggle_matrix(3, 3)
-    for r in res:
-        print(r)
-
 # Toggle matrix generation
 def get_toggle_matrix(rows: int, cols: int) -> list[list[int]]:
     s = rows * cols
@@ -45,17 +40,17 @@ def perform_gaussian_elimination(toggle_matrix, game_vector) -> None:
             continue
         toggle_matrix[pivot_row], toggle_matrix[next_free_row] = toggle_matrix[next_free_row], toggle_matrix[pivot_row]
         game_vector[pivot_row], game_vector[next_free_row] = game_vector[next_free_row], game_vector[pivot_row]
-        for row in range(pivot_row + 1, len(game_vector)):
+        for row in range(next_free_row + 1, len(game_vector)):
             if toggle_matrix[row][col]:
-                toggle_matrix[row] = [a ^ b for a, b in zip(toggle_matrix[row], toggle_matrix[next_free_row])]
+                toggle_matrix[row] = list(a ^ b for a, b in zip(toggle_matrix[row], toggle_matrix[next_free_row]))
                 game_vector[row] ^= game_vector[next_free_row]
         # end loop
         next_free_row += 1
     # end loop
 
-def back_substitute(toggle_matrix: list[list[int]], game_vector: list[[int]]) -> list[int]:
-    result: list[int] = []
-    for row in range(len(game_vector), 0, -1):
+def back_substitute(toggle_matrix: list[list[int]], game_vector: list[int]) -> list[int]:
+    result: list[int] = [0] * len(toggle_matrix)
+    for row in range(len(game_vector) - 1, -1, -1):
         pivot = None
         for col in range(len(game_vector)):
             if toggle_matrix[row][col]:
@@ -72,6 +67,57 @@ def back_substitute(toggle_matrix: list[list[int]], game_vector: list[[int]]) ->
 
     return result
 
+# Decode the column vector
+def decode_to_pairs(solution: list[int], n: int) -> list[list[int]]:
+    result = []
+    for i in range(len(solution)):
+        if solution[i]:
+            result.insert(0, [i // n, i % n])
+    return result
+
+# Solve
+def solve(game_matrix: list[list[int]]) -> list[list[int]]:
+    toggle = get_toggle_matrix(len(game_matrix), len(game_matrix[0]))
+    vector = linearize(game_matrix)
+    perform_gaussian_elimination(toggle, vector)
+    solution = back_substitute(toggle, vector)
+    return decode_to_pairs(solution, len(game_matrix))
+
+# Tests
+def test1():
+    print(back_substitute([
+        [1, 1, 0],
+        [0, 1, 1],
+        [0, 0, 1]
+    ],
+    [1, 1, 0]))
+    # result should be [0, 1, 0]
+
+def test2():
+    mat = [
+        [1, 1, 0],
+        [1, 0, 1],
+        [1, 1, 1]
+    ]
+    vec = [1, 0, 1]
+    perform_gaussian_elimination(mat, vec)
+    print(mat, vec)
+
+def test3():
+    puzzle = [
+        [1, 0],
+        [0, 1]
+    ]
+    print(solve(puzzle))
+
+def test4():
+    puzzle = [
+        [1, 0, 1],
+        [0, 1, 0],
+        [1, 0, 1]
+    ]
+    print(solve(puzzle))
+
 # Execute
 if __name__ == "__main__":
-    solve([])
+    test4()
