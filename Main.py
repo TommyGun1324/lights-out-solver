@@ -1,6 +1,9 @@
-def solve(game: list[list[int]]) -> list[list[int]]:
-    get_toggle_matrix(2, 2)
+def solve(game_matrix: list[list[int]]) -> list[list[int]]:
+    res = get_toggle_matrix(3, 3)
+    for r in res:
+        print(r)
 
+# Toggle matrix generation
 def get_toggle_matrix(rows: int, cols: int) -> list[list[int]]:
     s = rows * cols
     mat = list([0] * s for _ in range(s))
@@ -14,11 +17,45 @@ def get_toggle_matrix(rows: int, cols: int) -> list[list[int]]:
                         continue
                     elif -1 < i + di < rows and -1 < j + dj < cols:
                         mat[c][row_major_index(cols, i + di, j + dj)] = 1
-    for r in mat:
-        print(r)
+    return mat
 
 def row_major_index(size: int, i: int, j: int) -> int:
     return size * i + j
 
+# Gaussian elimination
+def linearize(matrix: list[list[int]]) -> list[int]:
+    res = []
+    for r in matrix:
+        res += r
+    # end loop
+    return res
+
+def find_pivot(matrix: list[list[int]], start_row: int, pivot_col) -> int:
+    for row in range(start_row, len(matrix)):
+        if matrix[row][pivot_col]:
+            return row
+    # end loop
+    return -1
+
+def perform_gaussian_elimination(toggle_matrix, game_vector) -> None:
+    next_free_row = 0
+    for col in range(len(game_vector)):
+        pivot_row = find_pivot(toggle_matrix, next_free_row, col)
+        if pivot_row == -1:
+            continue
+        toggle_matrix[pivot_row], toggle_matrix[next_free_row] = toggle_matrix[next_free_row], toggle_matrix[pivot_row]
+        game_vector[pivot_row], game_vector[next_free_row] = game_vector[next_free_row], game_vector[pivot_row]
+        for row in range(pivot_row + 1, len(game_vector)):
+            if toggle_matrix[row][col]:
+                toggle_matrix[row] = [a ^ b for a, b in zip(toggle_matrix[row], toggle_matrix[next_free_row])]
+                game_vector[row] ^= game_vector[next_free_row]
+        # end loop
+        next_free_row += 1
+    # end loop
+
+def back_substitute(toggle_matrix: list[list[int]], game_vector: list[[int]]) -> list[int]:
+    pass
+
+# Execute
 if __name__ == "__main__":
     solve([])
