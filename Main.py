@@ -54,7 +54,23 @@ def perform_gaussian_elimination(toggle_matrix, game_vector) -> None:
     # end loop
 
 def back_substitute(toggle_matrix: list[list[int]], game_vector: list[[int]]) -> list[int]:
-    pass
+    result: list[int] = []
+    for row in range(len(game_vector), 0, -1):
+        pivot = None
+        for col in range(len(game_vector)):
+            if toggle_matrix[row][col]:
+                pivot = col
+                break
+        if pivot is None:
+            if game_vector[row]:
+                print("There's no solution.")
+                return []
+        else:
+            result[row] = game_vector[row]
+            for col in range(pivot + 1, len(game_vector)):
+                result[row] = result[row] ^ (toggle_matrix[row][col] & result[col])
+
+    return result
 
 # Execute
 if __name__ == "__main__":
