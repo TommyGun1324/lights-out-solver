@@ -118,6 +118,19 @@ def test4():
     ]
     print(solve(puzzle))
 
+def the_reason():
+    puzzle = [
+        [0, 1, 0, 0, 1, 1],
+        [0, 0, 1, 1, 0, 0],
+        [0, 1, 1, 1, 0, 1],
+        [1, 0, 1, 1, 1, 1],
+        [0, 1, 1, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0]
+    ]
+    solution = solve(puzzle)
+    for p in solution:
+        print(p)
+
 # Execute
 if __name__ == "__main__":
-    test4()
+    the_reason()
