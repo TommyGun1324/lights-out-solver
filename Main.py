@@ -112,9 +112,9 @@ def test3():
 
 def test4():
     puzzle = [
-        [1, 0, 1],
         [0, 1, 0],
-        [1, 0, 1]
+        [1, 0, 1],
+        [0, 1, 0]
     ]
     print(solve(puzzle))
 
